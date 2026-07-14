@@ -11,8 +11,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Lemma R: the repetition identity for the (3/2)ⁿ steering word
 
-Stage 0 of the M4/A3 program, part 2 ([M4A3] §3.2–3.3).  A **repetition** is a
-length-`k` factor of the steering word occurring at two positions `a < c`
+A **repetition** is a length-`k` factor of the steering word occurring at two
+positions `a < c`
 (occurrences may overlap; nothing anchors them to the prefix — the dynamics is
 autonomous, so all constants are position-uniform, in contrast to
 Adamczewski–Bugeaud's prefix-anchored Condition (∗)).
@@ -30,7 +30,7 @@ with three quantitative shadows:
   (`gcd(2,3) = 1`);
 * **contraction** — `|ε_c − ε_a| ≤ (2/3)^k` (`abs_eps_sub_le_of_repetition`):
   a long repetition forces two orbit points exponentially close — the interface
-  to the Diophantine kernel (K) of [M4A3] §4–5;
+  to the Diophantine kernel (K) of `TH.KernelReduction`;
 * **growth ceiling** — for `2 ≤ a < c`, `2^k ≤ m_c − m_a ≤ m_c` bounds the
   repetition length: `2^(k+c+1) ≤ 3^(c+1)` (`repetition_pow_le`), i.e.
   `k ≲ 0.585·c` — pure integer arithmetic, no logarithms.
@@ -67,8 +67,6 @@ machinery plus, to our knowledge, its first formalization.
 
 ## References
 
-* [M4A3] `plan-M4A3.html` (this repository, 2026-07): §3.2 (Lemma R), §3.3
-  (elementary theorems), §4 (kernel interface), §10 (M-0 verdicts).
 * [AFS08] Akiyama, Frougny, Sakarovitch. *Powers of rationals modulo 1 and
   rational base number systems.* Israel J. Math. **168** (2008), 53–91.
   (Eq. (4), Lemmas 6/8: the congruence machinery.)
@@ -89,7 +87,7 @@ def IsRepetition (a c k : ℕ) : Prop := ∀ i < k, t (a + i) = t (c + i)
 lemma W_eq_of_repetition {a c k : ℕ} (h : IsRepetition a c k) : W a k = W c k :=
   Finset.sum_congr rfl fun i hi => by rw [h i (Finset.mem_range.mp hi)]
 
-/-- **Lemma R, integer form** ([M4A3] §3.2): a repetition at `a < c` of length `k`
+/-- **Lemma R, integer form**: a repetition at `a < c` of length `k`
 forces `3^k (m_c − m_a) = 2^k (m_{c+k} − m_{a+k})`. -/
 theorem lemmaR_int {a c k : ℕ} (h : IsRepetition a c k) :
     3 ^ k * (m c - m a) = 2 ^ k * (m (c + k) - m (a + k)) := by
@@ -98,7 +96,7 @@ theorem lemmaR_int {a c k : ℕ} (h : IsRepetition a c k) :
   have hw := W_eq_of_repetition h
   linear_combination ha - hc + hw
 
-/-- **Lemma R, fractional form** ([M4A3] §3.2): a repetition at `a < c` of length
+/-- **Lemma R, fractional form**: a repetition at `a < c` of length
 `k` forces `3^k (ε_c − ε_a) = 2^k (ε_{c+k} − ε_{a+k})`. -/
 theorem lemmaR_eps {a c k : ℕ} (h : IsRepetition a c k) :
     (3 : ℚ) ^ k * (eps c - eps a) = 2 ^ k * (eps (c + k) - eps (a + k)) := by
@@ -134,7 +132,7 @@ theorem two_pow_le_sub {a c k : ℕ} (ha : 2 ≤ a) (hac : a < c)
     (h : IsRepetition a c k) : (2 : ℤ) ^ k ≤ m c - m a :=
   Int.le_of_dvd (sub_pos.mpr (m_strictMono ha hac)) (two_pow_dvd_of_repetition h)
 
-/-- **Growth ceiling** ([M4A3] §3.2): a length-`k` repetition at `2 ≤ a < c`
+/-- **Growth ceiling**: a length-`k` repetition at `2 ≤ a < c`
 forces `2^(k+c+1) ≤ 3^(c+1)` — i.e. `k ≤ c·log₂(3/2) + O(1) ≈ 0.585·c`, stated
 as a pure integer inequality. -/
 theorem repetition_pow_le {a c k : ℕ} (ha : 2 ≤ a) (hac : a < c)
@@ -161,7 +159,7 @@ theorem repetition_pow_le_nat {a c k : ℕ} (ha : 2 ≤ a) (hac : a < c)
     (h : IsRepetition a c k) : 2 ^ (k + c + 1) ≤ 3 ^ (c + 1) := by
   exact_mod_cast repetition_pow_le ha hac h
 
-/-- **Contraction / kernel interface** ([M4A3] §3.2, §4): a length-`k` repetition
+/-- **Contraction / kernel interface**: a length-`k` repetition
 forces the two orbit points exponentially close, `|ε_c − ε_a| ≤ (2/3)^k`.  This is
 the inequality the Diophantine kernel (K) forbids at scale `k ≍ c`. -/
 theorem abs_eps_sub_le_of_repetition {a c k : ℕ} (h : IsRepetition a c k) :
@@ -179,7 +177,7 @@ theorem abs_eps_sub_le_of_repetition {a c k : ℕ} (h : IsRepetition a c k) :
         mul_le_mul_of_nonneg_left (abs_eps_sub_lt_one _ _).le hpos
     _ = (2 / 3 : ℚ) ^ k := mul_one _
 
-/-- **Trivial repulsion floor** ([M4A3] §3.2): for `1 ≤ a < c` the difference
+/-- **Trivial repulsion floor**: for `1 ≤ a < c` the difference
 `ε_c − ε_a` has odd numerator over `2^c`, hence `2^c·|ε_c − ε_a| ≥ 1`.  The kernel
 (K) asks to improve `2^{-c}` to `θ^c` for every `θ < 1`. -/
 theorem one_le_two_pow_mul_abs_eps_sub {a c : ℕ} (ha : 1 ≤ a) (hac : a < c) :
@@ -211,7 +209,7 @@ theorem one_le_two_pow_mul_abs_eps_sub {a c : ℕ} (ha : 1 ≤ a) (hac : a < c) 
 
 /-- **T0.2 (milestone M1)**: the steering word is not eventually periodic.  A
 fixed-gap repetition of every length would beat the growth ceiling
-`2^(k+c+1) ≤ 3^(c+1)` at fixed `c`.  [M4A3] §3.3. -/
+`2^(k+c+1) ≤ 3^(c+1)` at fixed `c`. -/
 theorem not_eventually_periodic :
     ¬ ∃ N p, 0 < p ∧ ∀ n, N ≤ n → t (n + p) = t n := by
   rintro ⟨N, p, hp, hper⟩
@@ -229,7 +227,7 @@ theorem not_eventually_periodic :
     Nat.pow_le_pow_right (by norm_num) (by omega)
   omega
 
-/-- **T0.3 (power-repetition gap)** ([M4A3] §3.3): a `(j+1)`-fold repetition of a
+/-- **T0.3 (power-repetition gap)**: a `(j+1)`-fold repetition of a
 length-`p` block starting at position `a ≥ 2` obeys
 `2^(j·p + a + p + 1) ≤ 3^(a+p+1)`, i.e. `j·p ≲ 0.585·(a+p)`: long periodic
 windows cannot occur late in the word. -/

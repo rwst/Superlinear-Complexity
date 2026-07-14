@@ -55,7 +55,6 @@ attribution — not as authority.
 * [NKR25] Nair, Parvathi S., Veekesh Kumar, and S. S. Rout. "Algebraic
   approximations to linear combinations of S-units." arXiv:2506.02898
   (v3, 18 Nov 2025). **Unrefereed preprint; Theorem 1.3(i) refuted below.**
-* [M4A3] `plan-M4A3.html` (this repository, 2026-07): §6.3 (Stage 2c), §10.1.
 * `report-formalize-subspace.html` §4, §6 (the refactor this file's repair
   completes).
 -/

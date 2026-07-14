@@ -10,8 +10,9 @@ import Mathlib.Data.Set.Function
 /-!
 # Stage 2c: the gap dichotomy — the kernel (K) and M4, modulo two cited results
 
-The middle-band kernel falls to the **gap dichotomy** of [M4A3] §6.3 (route 1),
-an unpublished one-page argument formalized here for the first time:
+The middle-band kernel falls to the **gap dichotomy** — an unpublished one-page
+argument, formalized here for the first time.  Neither (K) itself nor the
+NKR + CZ derivation below is in print:
 
 Suppose (K) fails at a rational scale `θ ∈ (0, 1)`: infinitely many pairs
 `2 ≤ a < c` with `‖(3/2)^c − (3/2)^a‖ ≤ θ^c`.  Look at the gaps `s = c − a`.
@@ -60,9 +61,6 @@ Everything is ineffective (Subspace-based).
 
 ## References
 
-* [M4A3] `plan-M4A3.html` (this repository, 2026-07): §6.3 route 1 (the
-  dichotomy), §10.1 (M-0 verdict: (K) not in print; NKR + CZ derivation
-  unpublished).
 * [NKR25] Nair, Kumar, Rout. *Algebraic approximations to linear combinations
   of S-units.* arXiv:2506.02898 (v3, 2025, unrefereed preprint).
 * [CZ04] Corvaja, Zannier. *On the rational approximations to the powers of an
@@ -151,7 +149,7 @@ private lemma three_halves_pow_sub_not_int {a c : ℕ} (ha : 1 ≤ a) (hac : a <
     exact Int.mul_emod_right 2 _
   omega
 
-/-- The ε₁-window of the NKR application ([M4A3] §6.3 route 1): for `a < c`,
+/-- The ε₁-window of the NKR application: for `a < c`,
 `θ^c < (3^c·3^a)^{-ε₁}` with `ε₁ = log θ⁻¹/(2 log 3)`. -/
 private lemma theta_pow_lt_height_rpow {θ : ℝ} (hθ0 : 0 < θ) (hθ1 : θ < 1)
     {a c : ℕ} (hac : a < c) :
@@ -280,7 +278,7 @@ private lemma finite_of_gap_injOn (θ : ℚ) (hθ0 : 0 < θ) (hθ1 : θ < 1)
 
 /-! ## The gap dichotomy and M4 -/
 
-/-- **The kernel (K) at every rational scale** ([M4A3] §6.3, the gap
+/-- **The kernel (K) at every rational scale** (the gap
 dichotomy): for every rational `θ ∈ (0, 1)`, only finitely many pairs
 `2 ≤ a < c` satisfy `‖(3/2)^c − (3/2)^a‖ ≤ θ^c`.  Bounded-gap violators are
 finite by the CZ 2004 slices (Stage 2b); an infinite family with unbounded
@@ -329,13 +327,13 @@ theorem pairRepulsion_all (θ : ℚ) (hθ0 : 0 < θ) (hθ1 : θ < 1) :
       rw [h]
     exact hTinf (finite_of_gap_injOn θ hθ0 hθ1 hTsub hinjT)
 
-/-- **The Diophantine kernel (K) holds** ([M4A3] §4–§6): exponential pair
+/-- **The Diophantine kernel (K) holds**: exponential pair
 repulsion for the orbit of `(3/2)^n` at every rational scale.  Footprint
 std3 + [CZ04] + [NKR25] (**preprint**). -/
 theorem kernel_holds : Kernel := fun θ hθ0 hθ1 => pairRepulsion_all θ hθ0 hθ1
 
 /-- **M4: the steering word has superlinear subword complexity**,
-`p_T(k)/k → ∞` — the target of the M4/A3 program ([M4A3] §1–2), reached
+`p_T(k)/k → ∞` — the target of the development, reached
 through: Lemma R (Stage 0) → the pigeonhole reduction to (K) (Stage 1) →
 the CZ 2004 gap slices (Stage 2b/2b′) → the NKR gap dichotomy (Stage 2c).
 Ineffective.  Footprint std3 + [CZ04] (refereed) + [NKR25] (**unrefereed

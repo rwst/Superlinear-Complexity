@@ -73,7 +73,7 @@ family.  Ineffective throughout.
   single axiom everything rests on).
 * [CZ04] Corvaja–Zannier, Acta Math. **193** (2004)
   (`CITED/CorvajaZannierProof.lean` — the `n = 2` ingredient).
-* `report-formalize-subspace.html` §4, §6; `plan-M4A3.html` §6.3, §10.1.
+* `report-formalize-subspace.html` §4, §6.
 -/
 
 namespace NKR

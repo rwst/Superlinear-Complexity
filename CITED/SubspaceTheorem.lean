@@ -94,7 +94,6 @@ following documented choices (each of which a consumer may only *weaken*):
 * `report-formalize-subspace.html` (this repository, 2026-07): the dependency
   analysis and effort estimate that motivates this file; §3 (CZ → Ridout),
   §4 (NKR → Subspace n = 3), §6 (the one-axiom refactor).
-* [M4A3] `plan-M4A3.html`, §5–6.
 -/
 
 namespace Subspace

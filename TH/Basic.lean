@@ -15,11 +15,11 @@ import ForMathlib.Data.Rat.NearestInt
 
 
 /-!
-# The (3/2)ⁿ steering word: basic objects (M4/A3 program, Stage 0)
+# The (3/2)ⁿ steering word: basic objects
 
-Stage 0 of the M4/A3 program ([M4A3] §2–3): the nearest-integer decomposition of the
-orbit of `(3/2)ⁿ`, its symbolic **steering word**, and the exact circuit-sum algebra
-that everything downstream rests on.
+The foundation of the development: the nearest-integer decomposition of the orbit of
+`(3/2)ⁿ`, its symbolic **steering word**, and the exact circuit-sum algebra that
+everything downstream rests on.
 
 Write `(3/2)ⁿ = mₙ + εₙ` with `mₙ ∈ ℤ` and `εₙ ∈ [-1/2, 1/2)` (centered fractional
 part, the house `E`/`ε` convention of the Bertin files; `mₙ = round ((3/2)ⁿ)`).  The
@@ -43,7 +43,7 @@ bounds of `TH.ComplexityLower`.
 
 Everything here is pure `ℤ`/`ℚ` arithmetic — no real analysis.  Sanity values
 (`category test` lemmas) match the computed row `m = 1,2,2,3,5,8,…`,
-`t = 1,−2,0,1,1,…` of [M4A3] §2.
+`t = 1,−2,0,1,1,…`.
 
 ## Contents
 
@@ -65,9 +65,6 @@ Everything here is pure `ℤ`/`ℚ` arithmetic — no real analysis.  Sanity val
 
 ## References
 
-* [M4A3] `plan-M4A3.html` (this repository, 2026-07): *Plan M4/A3 — superlinear
-  complexity of the (3/2)ⁿ steering word via the Subspace theorem*, §2 (objects and
-  normalizations), §3.1 (circuit-sum closed form).
 * [AFS08] Akiyama, Frougny, Sakarovitch. *Powers of rationals modulo 1 and rational
   base number systems.* Israel J. Math. **168** (2008), 53–91.  (Symbolic context.)
 -/
@@ -75,27 +72,27 @@ Everything here is pure `ℤ`/`ℚ` arithmetic — no real analysis.  Sanity val
 namespace TH
 
 /-- `m n` is the nearest integer to `(3/2)^n` (round-half-up: `round` is `⌊·+1/2⌋`,
-so ties go up and `eps` below lands in `[-1/2, 1/2)`).  [M4A3] §2. -/
+so ties go up and `eps` below lands in `[-1/2, 1/2)`). -/
 def m (n : ℕ) : ℤ := round ((3 / 2 : ℚ) ^ n)
 
 /-- `eps n = (3/2)^n − m n ∈ [-1/2, 1/2)` — the centered fractional part of the
-orbit point (house ε convention).  [M4A3] §2. -/
+orbit point (house ε convention). -/
 def eps (n : ℕ) : ℚ := (3 / 2 : ℚ) ^ n - m n
 
 /-- `R n = 3^n − 2^n·(m n)`, the integer numerator of `eps n` over `2^n`. -/
 def R (n : ℕ) : ℤ := 3 ^ n - 2 ^ n * m n
 
 /-- The steering letter `t n = 2·m (n+1) − 3·m n`: which integer translate the
-`×(3/2)` map selects at step `n`.  [M4A3] §2. -/
+`×(3/2)` map selects at step `n`. -/
 def t (n : ℕ) : ℤ := 2 * m (n + 1) - 3 * m n
 
 /-- The parity letter `b n = m n % 2`; the parity word is the mod-2 reduction of the
-steering word (`t_emod_two`).  [M4A3] §2. -/
+steering word (`t_emod_two`). -/
 def b (n : ℕ) : ℤ := m n % 2
 
 /-- The circuit sum `W a k = Σ_{i<k} 3^(k-1-i)·2^i·t (a+i)` — the inhomogeneous term
 accumulated by `k` steps of the orbit from position `a`; same algebra as
-`CC.linear_decomposition`.  [M4A3] §3.1. -/
+`CC.linear_decomposition`. -/
 def W (a k : ℕ) : ℤ := ∑ i ∈ Finset.range k, 3 ^ (k - 1 - i) * 2 ^ i * t (a + i)
 
 /-! ## Bounds on `eps` -/
@@ -144,7 +141,7 @@ lemma two_pow_mul_eps (n : ℕ) : (2 : ℚ) ^ n * eps n = R n := by
   rw [eps_eq, mul_div_cancel₀ _ h2]
 
 /-- **`R n` is odd for `n ≥ 1`** — the trivial repulsion floor `|ε_c − ε_a| ≥ 2^{-c}`
-of [M4A3] §3.2 rests on this. -/
+rests on this. -/
 lemma R_emod_two (n : ℕ) (hn : 1 ≤ n) : R n % 2 = 1 := by
   have h3 : (3 : ℤ) ^ n % 2 = 1 :=
     Int.odd_iff.mp ((Int.odd_iff.mpr (by norm_num)).pow)
@@ -237,13 +234,13 @@ lemma m_pos (n : ℕ) : 0 < m n := by
   exact_mod_cast h3
 
 /-- Integer growth cap: `2·(2^n·m n) ≤ 2·3^n + 2^n` — the elementary ceiling that
-bounds repetition lengths (`k ≲ 0.585·c`, [M4A3] §3.2). -/
+bounds repetition lengths (`k ≲ 0.585·c`). -/
 lemma two_pow_mul_m_le (n : ℕ) : 2 * ((2 : ℤ) ^ n * m n) ≤ 2 * 3 ^ n + 2 ^ n := by
   have h := neg_two_pow_le_two_mul_R n
   unfold R at h
   linarith
 
-/-! ## Sanity row ([M4A3] §2): `m = 1, 2, 2, 3, 5, 8, …`, `t = 1, −2, 0, 1, 1, …` -/
+/-! ## Sanity row: `m = 1, 2, 2, 3, 5, 8, …`, `t = 1, −2, 0, 1, 1, …` -/
 
 private lemma round_helper {x : ℚ} {z : ℤ} (h1 : (z : ℚ) ≤ x + 1 / 2)
     (h2 : x + 1 / 2 < z + 1) : round x = z := by
@@ -274,8 +271,7 @@ lemma eps_zero : eps 0 = 0 := by
   rw [m_zero]
   norm_num
 
-/-- The steering word starts `1, −2, 0, 1, 1` — matching the computed sanity row of
-[M4A3] §2. -/
+/-- The steering word starts `1, −2, 0, 1, 1` — matching the computed sanity row. -/
 lemma t_sanity : t 0 = 1 ∧ t 1 = -2 ∧ t 2 = 0 ∧ t 3 = 1 ∧ t 4 = 1 := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
     simp [t, m_zero, m_one, m_two, m_three, m_four, m_five]
@@ -299,9 +295,8 @@ lemma W_succ (a k : ℕ) : W a (k + 1) = 3 * W a k + 2 ^ k * t (a + k) := by
   rw [h2, pow_succ]
   ring
 
-/-- **Closed form of the circuit sum** ([M4A3] §3.1, boxed):
-`W(a,k) = 3^k·ε_a − 2^k·ε_{a+k}`.  The main terms of the orbit cancel exactly;
-every repetition statement downstream flows from this. -/
+/-- **Closed form of the circuit sum**: `W(a,k) = 3^k·ε_a − 2^k·ε_{a+k}`.  The main terms
+of the orbit cancel exactly; every repetition statement downstream flows from this. -/
 theorem W_closed (a k : ℕ) : (W a k : ℚ) = 3 ^ k * eps a - 2 ^ k * eps (a + k) := by
   induction k with
   | zero => simp [W_zero]
@@ -313,8 +308,8 @@ theorem W_closed (a k : ℕ) : (W a k : ℚ) = 3 ^ k * eps a - 2 ^ k * eps (a + 
     rw [hsucc]
     ring
 
-/-- Integer circuit sum ([M4A3] §3.1): `2^k·m_{a+k} = 3^k·m_a + W(a,k)` — the same
-decomposition as `CC.linear_decomposition`, here for the `×(3/2)` orbit. -/
+/-- Integer circuit sum: `2^k·m_{a+k} = 3^k·m_a + W(a,k)` — the same decomposition as
+`CC.linear_decomposition`, here for the `×(3/2)` orbit. -/
 theorem circuit_sum (a k : ℕ) : 2 ^ k * m (a + k) = 3 ^ k * m a + W a k := by
   induction k with
   | zero => simp [W_zero]
@@ -368,7 +363,7 @@ lemma m_strictMono {a c : ℕ} (ha : 2 ≤ a) (hac : a < c) : m a < m c := by
 
 /-! ## Kernel interface: distance to the nearest integer
 
-The Diophantine kernel (K) of [M4A3] §4 speaks about `‖(3/2)^c − (3/2)^a‖`, the
+The Diophantine kernel (K) (`TH.KernelReduction`) speaks about `‖(3/2)^c − (3/2)^a‖`, the
 distance from the orbit difference to the *nearest* integer.  The bridge from the
 `eps`-world: the orbit difference is `(ε_c − ε_a)` away from the particular integer
 `m_c − m_a`, so `‖·‖ ≤ |ε_c − ε_a|`; and the odd-numerator argument of
@@ -386,10 +381,10 @@ lemma distToNearestInt_orbit_le (a c : ℕ) :
   rw [h, Rat.distToNearestInt_add_intCast]
   exact Rat.distToNearestInt_le_abs _
 
-/-- **Trivial repulsion floor, kernel form** ([M4A3] §3.2): for `1 ≤ a < c` the
-orbit difference `(3/2)^c − (3/2)^a = 3^a(3^{c-a} − 2^{c-a})/2^c` has odd numerator
-over `2^c`, so `1 ≤ 2^c · ‖(3/2)^c − (3/2)^a‖`.  The kernel (K) asks to improve
-this `2^{-c}` to `θ^c` for every `θ < 1`. -/
+/-- **Trivial repulsion floor, kernel form**: for `1 ≤ a < c` the orbit difference
+`(3/2)^c − (3/2)^a = 3^a(3^{c-a} − 2^{c-a})/2^c` has odd numerator over `2^c`, so
+`1 ≤ 2^c · ‖(3/2)^c − (3/2)^a‖`.  The kernel (K) asks to improve this `2^{-c}` to `θ^c`
+for every `θ < 1`. -/
 theorem one_le_two_pow_mul_distToNearestInt_orbit {a c : ℕ} (ha : 1 ≤ a)
     (hac : a < c) :
     1 ≤ 2 ^ c * ((3 / 2 : ℚ) ^ c - (3 / 2 : ℚ) ^ a).distToNearestInt := by

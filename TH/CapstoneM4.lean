@@ -8,8 +8,8 @@ import TH.GapSlices
 /-!
 # The conditional capstone: M4 from the middle-band kernel
 
-Milestone M-5 of the M4/A3 program ([M4A3] §9): the conditional capstone in the
-house `hexc` pattern (mirroring `paradoxical/BakerReduction.lean`).
+The conditional capstone, in the house `hexc` pattern (mirroring
+`paradoxical/BakerReduction.lean`).
 
 After Stage 2b and 2b′ (`TH.GapSlices`), what remains open of the kernel (K) is
 exactly the **middle band**: (K)-violating pairs `(a, c)` whose earlier
@@ -26,15 +26,17 @@ modulo the cited CZ 2004 axiom.  So:
 
 The middle-band hypothesis `hmid` is the open Stage-2c kernel — consumed as a
 named HYPOTHESIS, never an axiom, per the layered-QA policy (open conjectures
-are never axiomatized).  Stage 2c ([M4A3] §6.3) attacks it: primary route the
-NKR gap dichotomy (arXiv:2506.02898 Thm 1.3 + CZ 2004), fallback the
-`λ_s`-as-coordinate Subspace form system.  Note the quantifier order: the
+are never axiomatized).  Stage 2c attacks it, and discharges it in
+`TH.GapDichotomy`: primary route the NKR gap dichotomy (arXiv:2506.02898 Thm 1.3
++ CZ 2004), fallback the `λ_s`-as-coordinate Subspace form system.  Note the
+quantifier order: the
 prover of `hmid` receives `ε′` (so may assume it as small as convenient) and
 chooses `S` — the weakest form the decomposition supports, since 2b′ supplies
 only *some* `ε′(θ) > 0`.
 
-Axiom footprint: std3 + `CZ.pseudoPisot_approx` ([CZ04]).  With this file, the
-Lean side of the program is complete modulo Stage 2c ([M4A3] §9, M-5).
+With this file, the
+Lean side of the development is complete modulo Stage 2c, which `TH.GapDichotomy`
+then discharges.
 
 ## Contents
 
@@ -45,8 +47,6 @@ Lean side of the program is complete modulo Stage 2c ([M4A3] §9, M-5).
 
 ## References
 
-* [M4A3] `plan-M4A3.html` (this repository, 2026-07): §6.3 (Stage 2c), §9
-  (architecture, milestone M-5).
 * [CZ04] Corvaja, Zannier. *On the rational approximations to the powers of an
   algebraic number.* Acta Math. **193** (2004), 175–191.
 -/
@@ -55,14 +55,14 @@ namespace TH
 
 /-- The **middle band** of the kernel at scale `θ`: (K)-violating pairs with
 late earlier occurrence (`ε′·c ≤ a`) and gap at least `S`.  After the CZ slices
-of `TH.GapSlices`, this is all that remains of (K) — the open Stage-2c target
-([M4A3] §6.3). -/
+of `TH.GapSlices`, this is all that remains of (K) — the Stage-2c target,
+discharged in `TH.GapDichotomy`. -/
 def middleBandViolators (θ ε' : ℚ) (S : ℕ) : Set (ℕ × ℕ) :=
   {p ∈ kernelViolators θ | ε' * p.2 ≤ (p.1 : ℚ) ∧ p.1 + S ≤ p.2}
 
 /-- Pair repulsion at scale `θ` from middle-band repulsion: the huge-gap band is
 finite (Stage 2b′) and the gap-bounded part is finite (Stage 2b), so the middle
-band is all that (K) still needs.  [M4A3] §6.2′/§9.  Footprint std3 + [CZ04]. -/
+band is all that (K) still needs.  Footprint std3 + [CZ04]. -/
 theorem pairRepulsion_of_middleBand (θ : ℚ) (hθ0 : 0 < θ) (hθ1 : θ < 1)
     (hmid : ∀ ε' : ℚ, 0 < ε' → ∃ S : ℕ, (middleBandViolators θ ε' S).Finite) :
     PairRepulsion θ := by
@@ -81,7 +81,7 @@ theorem pairRepulsion_of_middleBand (θ : ℚ) (hθ0 : 0 < θ) (hθ1 : θ < 1)
   exact Set.Finite.subset
     ((hhuge.union (gapBounded_slice_finite S θ hθ0 hθ1)).union hmidfin) hsub
 
-/-- **The conditional capstone (M4 from the middle-band kernel)** ([M4A3] §9):
+/-- **The conditional capstone (M4 from the middle-band kernel)**:
 if for every rational scale `θ ∈ (0, 1)` and every `ε′ > 0` there is a gap
 threshold `S` making the middle band finite, then the steering word has
 superlinear subword complexity, `p_T(k)/k → ∞`.

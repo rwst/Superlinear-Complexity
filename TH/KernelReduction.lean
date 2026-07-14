@@ -9,10 +9,9 @@ import Mathlib.Algebra.Order.Ring.Pow
 /-!
 # Stage 1: the Diophantine kernel (K) and the reduction M4-from-(K)
 
-Stage 1 of the M4/A3 program ([M4A3] §4): M4 (superlinear subword complexity of
-the steering word) reduces by pigeonhole + Lemma R to a single Diophantine
-statement, the **kernel (K)** — exponential pair repulsion for the orbit of
-`(3/2)^n`:
+**M4** — superlinear subword complexity of the steering word, `p_T(k)/k → ∞` — reduces
+by pigeonhole + Lemma R to a single Diophantine statement, the **kernel (K)** —
+exponential pair repulsion for the orbit of `(3/2)^n`:
 
   (K)  for every `θ < 1`, `‖(3/2)^c − (3/2)^a‖ ≤ θ^c` has only finitely many
        solutions `2 ≤ a < c`.
@@ -48,31 +47,26 @@ proved from the CZ 2004 axiom in `TH.GapSlices`, and the conditional capstone
 * `TH.mem_kernelViolators_of_repetition` — the Lemma-R contraction of a
   repetition into the kernel.
 * `TH.superlinear_of_kernel` — **the Stage-1 reduction**: (K) ⟹ M4.
-
-## References
-
-* [M4A3] `plan-M4A3.html` (this repository, 2026-07): §4 (Stage 1: the kernel
-  and the reduction), §5 (the kernel's three faces).
 -/
 
 namespace TH
 
-/-- The (K)-violating pairs at scale `θ` ([M4A3] §4): `2 ≤ a < c` with
+/-- The (K)-violating pairs at scale `θ`: `2 ≤ a < c` with
 `‖(3/2)^c − (3/2)^a‖ ≤ θ^c`. -/
 def kernelViolators (θ : ℚ) : Set (ℕ × ℕ) :=
   {p | 2 ≤ p.1 ∧ p.1 < p.2 ∧
     ((3 / 2 : ℚ) ^ p.2 - (3 / 2 : ℚ) ^ p.1).distToNearestInt ≤ θ ^ p.2}
 
 /-- **Exponential pair repulsion at scale `θ`**: only finitely many (K)-violating
-pairs.  [M4A3] §4. -/
+pairs. -/
 def PairRepulsion (θ : ℚ) : Prop := (kernelViolators θ).Finite
 
-/-- **The Diophantine kernel (K)** ([M4A3] §4): pair repulsion at every rational
+/-- **The Diophantine kernel (K)**: pair repulsion at every rational
 scale `θ ∈ (0, 1)` — the orbit's points repel at every exponential scale. -/
 def Kernel : Prop := ∀ θ : ℚ, 0 < θ → θ < 1 → PairRepulsion θ
 
 /-- **M4**: the subword complexity of the steering word is superlinear,
-`p_T(k)/k → ∞` ([M4A3] §2, targets). -/
+`p_T(k)/k → ∞` — the target of the development. -/
 def Superlinear : Prop := ∀ C : ℕ, ∃ K : ℕ, ∀ k, K ≤ k → C * k < complexity k
 
 /-- Rational Bernoulli certificate: for `r ∈ (0, 1)` and `N ≥ 1` there is a
@@ -91,7 +85,7 @@ lemma exists_pow_ge (r : ℚ) (hr0 : 0 < r) (hr1 : r < 1) (N : ℕ) (hN : 1 ≤ 
     _ ≤ (1 + -((1 - r) / N)) ^ N := hb
     _ = (1 - (1 - r) / N) ^ N := by rw [← sub_eq_add_neg]
 
-/-- The Lemma-R contraction into the kernel ([M4A3] §4): a length-`k` repetition
+/-- The Lemma-R contraction into the kernel: a length-`k` repetition
 `(a, c, k)` with `c ≤ (C+2)·k` lands in `kernelViolators θ` for any rational
 scale `θ` with `θ^{C+2} ≥ 2/3`. -/
 lemma mem_kernelViolators_of_repetition {θ : ℚ} (hθ0 : 0 < θ) (hθ1 : θ < 1)
@@ -106,7 +100,7 @@ lemma mem_kernelViolators_of_repetition {θ : ℚ} (hθ0 : 0 < θ) (hθ1 : θ < 
     _ = θ ^ ((C + 2) * k) := (pow_mul θ (C + 2) k).symm
     _ ≤ θ ^ c := pow_le_pow_of_le_one hθ0.le hθ1.le hck
 
-/-- **Stage 1 reduction, (K) ⟹ M4** ([M4A3] §4): exponential pair repulsion at
+/-- **Stage 1 reduction, (K) ⟹ M4**: exponential pair repulsion at
 every rational scale forces superlinear subword complexity of the steering word.
 Proof: pigeonhole a failing `C` into a repetition, contract by Lemma R into
 `kernelViolators θ` at the Bernoulli scale `θ(C)`, and let the growth ceiling

@@ -191,7 +191,3 @@ known_gaps:
     The gap dichotomy (Stage 2c) is described in the docstrings as "an unpublished
     one-page argument formalized here for the first time". It has no published referent,
     so `TH.pairRepulsion_all` is new mathematics, not a formalization of a known proof.
-  - >
-    The [M4A3] plan document cited throughout the docstrings (`plan-M4A3.html`) is not
-    present in the repository, so the section references (§2, §3.1, §6.3, §9, …) are
-    currently unresolvable by a reader.

@@ -49,13 +49,13 @@ specialization *weakens* the source statement, hence is safe):
   (e.g. `H((3/2)^a) = 3^a`, `CZ.height23_neg_natCast`).
 * **Norms/threshold**: `‖·‖ = Rat.distToNearestInt` (exact, in `ℚ`); the threshold
   `H(u)^{-ε} q^{-1-ε}` lives in `ℝ` via `rpow`, with `ε : ℝ` free.  Exponential
-  rates `ℓ^{-a}` convert via `ε < log ℓ / log 3` ([M4A3] §10.4).
+  rates `ℓ^{-a}` convert via `ε < log ℓ / log 3`.
 
 The finiteness is **ineffective** (Subspace-based): no bound on the exceptional
 set is provided, only its finiteness.  Do not expect computable exceptional
-bounds downstream ([M4A3] §11).
+bounds downstream.
 
-Consumers ([M4A3] §6.2, §6.2′, formalized in `TH/GapSlices.lean`): the
+Consumers (formalized in `TH/GapSlices.lean`): the
 bounded-gap slice of the kernel (K) (`δ = (3/2)^{s₀} − 1`, `q = 1`,
 `u = (3/2)^a`) and the huge-gap band (`δ = 1`, `q = 3^a`, `u = (3/2)^s` — the
 `(q, u)`-pair uniformity of the theorem is what makes this slice fall).
@@ -83,9 +83,6 @@ as that theorem.
   Mendès France." *Acta Mathematica* **193** (2004), 175–191. arXiv `math/0403522`.
   (Main Theorem, p. 2; not to be confused with their Theorem 1, the `q = 1, δ = 1`
   slice, which for rational `α` is Mahler 1957.)
-* [M4A3] `plan-M4A3.html` (this repository, 2026-07): §5 (statement fidelity),
-  §6.2/6.2′ (the two slices), §8 row 1 (transcription brief), §10.4 (full-read
-  verdict).
 -/
 
 namespace CZ
