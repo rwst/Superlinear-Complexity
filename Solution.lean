@@ -5,6 +5,7 @@ See https://creativecommons.org/publicdomain/zero/1.0/
 -/
 import TH.KernelReduction
 import TH.CapstoneM4
+import TH.GapDichotomy
 import CITED.SubspaceTheorem
 
 /-!
@@ -16,6 +17,7 @@ actual proofs**, so that the constants
 
 * `TH.superlinear_of_kernel`   (proved in `TH.KernelReduction`)
 * `TH.superlinear_of_middleBand`   (proved in `TH.CapstoneM4`)
+* `TH.kernel_holds`, `TH.complexity_superlinear`   (proved in `TH.GapDichotomy`)
 * `Subspace.evertseSchlickewei`   (the cited axiom, declared in `CITED.SubspaceTheorem`)
 
 are present in this module's environment with their genuine proofs and their genuine

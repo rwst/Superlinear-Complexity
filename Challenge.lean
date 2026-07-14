@@ -107,6 +107,21 @@ theorem superlinear_of_middleBand
       ∃ S : ℕ, (middleBandViolators θ ε' S).Finite) :
     Superlinear := sorry
 
+/-- **The Diophantine kernel (K) holds**: exponential pair repulsion for the orbit of
+`(3/2)^n` at every rational scale — Stage 2c, closed by the gap dichotomy.
+
+Certified by `comparator/superlinear.json` under the standard axioms plus the cited
+`Subspace.evertseSchlickewei`. -/
+theorem kernel_holds : Kernel := sorry
+
+/-- **M4, unconditionally (modulo the cited Subspace Theorem)**: the steering word of the
+`(3/2)^n` orbit has superlinear subword complexity, `p_T(k)/k → ∞`.
+
+This is the program's target and this repository's headline claim.  Certified by
+`comparator/superlinear.json` under the standard axioms plus `Subspace.evertseSchlickewei`
+— and by nothing else: no `sorry`, no further axiom, no open hypothesis. -/
+theorem complexity_superlinear : Superlinear := sorry
+
 end TH
 
 namespace Subspace

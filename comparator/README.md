@@ -27,11 +27,17 @@ mechanically, and CI fails if it ever regresses.
 | --- | --- | --- |
 | `kernel.json` | `TH.superlinear_of_kernel` — the Stage-1 reduction (K) ⟹ M4 | `propext`, `Quot.sound`, `Classical.choice` |
 | `capstone.json` | `TH.superlinear_of_middleBand` — the conditional capstone | the above **+** `Subspace.evertseSchlickewei` |
+| `superlinear.json` | `TH.kernel_holds`, `TH.complexity_superlinear` — **the headline: M4** | the above **+** `Subspace.evertseSchlickewei` |
 
-So the reduction (K) ⟹ M4 is certified to lean on *no cited literature whatsoever*, and
-the capstone's dependence on the Subspace Theorem is certified to be its *only* such
-dependence. Both are checked: swapping `capstone.json` to the standard axioms alone makes
-comparator report `Illegal axiom detected: 'Subspace.evertseSchlickewei'`.
+So `superlinear.json` certifies the program's target — the steering word of the `(3/2)^n`
+orbit has superlinear subword complexity — resting on the Subspace Theorem and *nothing
+else*: no `sorry`, no second axiom, no open hypothesis. `kernel.json` separately certifies
+that the Stage-1 reduction leans on no cited literature at all, and `capstone.json` keeps
+the axiom-input-free conditional form of record honest.
+
+The stratification is enforced, not decorative: swapping `capstone.json` or
+`superlinear.json` to the standard axioms alone makes comparator report
+`Illegal axiom detected: 'Subspace.evertseSchlickewei'`.
 
 ## Install
 

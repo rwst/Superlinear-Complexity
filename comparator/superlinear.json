@@ -1,0 +1,7 @@
+{
+    "challenge_module": "Challenge",
+    "solution_module": "Solution",
+    "theorem_names": ["TH.kernel_holds", "TH.complexity_superlinear"],
+    "permitted_axioms": ["propext", "Quot.sound", "Classical.choice", "Subspace.evertseSchlickewei"],
+    "enable_nanoda": false
+}

@@ -54,7 +54,7 @@ See `comparator/README.md`.
 
 /-- The comparator configs run by `lake test`, unless overridden by `lake test -- <cfg>…`. -/
 def comparatorConfigs : Array String :=
-  #["comparator/kernel.json", "comparator/capstone.json"]
+  #["comparator/kernel.json", "comparator/capstone.json", "comparator/superlinear.json"]
 
 /-- Resolve a binary: `$envVar` if set, else the first candidate path that exists, else
 whatever `PATH` yields.  `none` if it cannot be found at all. -/
