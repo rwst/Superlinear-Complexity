@@ -304,7 +304,7 @@ lemma W_succ (a k : ℕ) : W a (k + 1) = 3 * W a k + 2 ^ k * t (a + k) := by
 every repetition statement downstream flows from this. -/
 theorem W_closed (a k : ℕ) : (W a k : ℚ) = 3 ^ k * eps a - 2 ^ k * eps (a + k) := by
   induction k with
-  | zero => simp
+  | zero => simp [W_zero]
   | succ k ih =>
     rw [W_succ]
     push_cast
@@ -317,7 +317,7 @@ theorem W_closed (a k : ℕ) : (W a k : ℚ) = 3 ^ k * eps a - 2 ^ k * eps (a + 
 decomposition as `CC.linear_decomposition`, here for the `×(3/2)` orbit. -/
 theorem circuit_sum (a k : ℕ) : 2 ^ k * m (a + k) = 3 ^ k * m a + W a k := by
   induction k with
-  | zero => simp
+  | zero => simp [W_zero]
   | succ k ih =>
     have hsucc : a + (k + 1) = (a + k) + 1 := rfl
     rw [hsucc, W_succ]

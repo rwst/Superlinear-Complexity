@@ -4,7 +4,7 @@ Released under CC0 1.0 Universal (public-domain dedication).
 See https://creativecommons.org/publicdomain/zero/1.0/
 -/
 import TH.CapstoneM4
-import CITED.NairKumarRout
+import CITED.NairKumarRoutProof
 import Mathlib.Data.Set.Function
 
 /-!
@@ -23,9 +23,11 @@ Suppose (K) fails at a rational scale `θ ∈ (0, 1)`: infinitely many pairs
   (`Function.invFunOn` section).  The tuples `(u₁, u₂) = ((3/2)^c, (3/2)^a)`
   then have pairwise-distinct ratios `u₁/u₂ = (3/2)^{c-a}` — exactly the
   tuple-family hypothesis of the Nair–Kumar–Rout theorem — and satisfy
-  `‖u₁ − u₂‖ ≤ θ^c < (H(u₁)H(u₂))^{-ε₁}` for `ε₁ = log θ⁻¹/(2 log 3)`
-  (since `H(u₁)H(u₂) = 3^{c+a}` and `a < c`).  [NKR25] Theorem 1.3(i)
-  (`NKR.sUnit_pair_integrality`) makes some `(3/2)^c` an integer — absurd,
+  `0 < ‖u₁ − u₂‖ ≤ θ^c < (H(u₁)H(u₂))^{-ε₁}` for `ε₁ = log θ⁻¹/(2 log 3)`
+  (since `H(u₁)H(u₂) = 3^{c+a}` and `a < c`; positivity because
+  `(3/2)^c − (3/2)^a = odd/2^c ∉ ℤ`).  The **repaired and derived** [NKR25]
+  Theorem 1.3(i) (`NKR.sUnit_pair_integrality_of_subspace`,
+  `CITED/NairKumarRoutProof.lean`) makes some `(3/2)^c` an integer — absurd,
   as `2^c·(3/2)^c = 3^c` is odd.
 
 Hence **(K) holds at every rational scale** (`pairRepulsion_all`,
@@ -34,15 +36,17 @@ Hence **(K) holds at every rational scale** (`pairRepulsion_all`,
 * `complexity_superlinear` — **M4**: the steering word of the `(3/2)^n` orbit
   has superlinear subword complexity, `p_T(k)/k → ∞`.
 
-**⚠ Axiom footprint**: std3 + `CZ.pseudoPisot_approx` ([CZ04], refereed,
-Acta Math.) + `NKR.sUnit_pair_integrality` ([NKR25], **unrefereed arXiv
-preprint**, v3 Nov 2025).  Per the layered-QA policy the preprint status is
-flagged here and in `CITED/NairKumarRout.lean`; the NKR-free *conditional*
-capstone `superlinear_of_middleBand` (`TH.CapstoneM4`, middle band as a named
-hypothesis) remains the refereed-only statement of record.  The middle-band
-hypothesis itself is discharged mod the preprint: `middleBandViolators_finite`.
+**Axiom footprint**: **std3 + `Subspace.evertseSchlickewei` ([S]) — the single
+canonical axiom** (2026-07-14).  Both Diophantine inputs are now *derived* from
+it: the [CZ04] Main Theorem (`CITED/CorvajaZannierProof.lean`, `n = 2`) and the
+[NKR25] pair theorem (`CITED/NairKumarRoutProof.lean`, `n = 3`; the preprint's
+Theorem 1.3(i) was **false as stated** — see `NKR.thm13i_unrepaired_false` —
+and is used here in its repaired, proved form, with the strict positivity
+discharged by parity).  The conditional capstone `superlinear_of_middleBand`
+(`TH.CapstoneM4`, middle band as a named hypothesis) remains as the
+axiom-input-free statement of record.
 
-Everything is ineffective (both cited inputs are Subspace-based).
+Everything is ineffective (Subspace-based).
 
 ## Contents
 
@@ -111,6 +115,39 @@ private lemma three_halves_pow_not_int {c : ℕ} (hc : 1 ≤ c) (n : ℤ)
   have h2 : ((2 : ℤ) ^ c * n) % 2 = 0 := by
     obtain ⟨j, rfl⟩ : ∃ j, c = j + 1 := ⟨c - 1, by omega⟩
     rw [show (2 : ℤ) ^ (j + 1) * n = 2 * (2 ^ j * n) by ring]
+    exact Int.mul_emod_right 2 _
+  omega
+
+/-- `(3/2)^c − (3/2)^a` is never an integer for `1 ≤ a < c`: clearing `2^c`
+gives `3^c − 2^{c-a}·3^a = 2^c·n`, odd = even.  Discharges the strict-positivity
+hypothesis of the repaired NKR theorem. -/
+private lemma three_halves_pow_sub_not_int {a c : ℕ} (ha : 1 ≤ a) (hac : a < c)
+    (n : ℤ) (h : (3 / 2 : ℚ) ^ c - (3 / 2 : ℚ) ^ a = n) : False := by
+  have h2c : ((2 : ℚ) ^ c) ≠ 0 := by positivity
+  have h2a : ((2 : ℚ) ^ a) ≠ 0 := by positivity
+  have e1 : (2 : ℚ) ^ c * (3 / 2 : ℚ) ^ c = 3 ^ c := by
+    rw [div_pow]
+    field_simp
+  have e2 : (2 : ℚ) ^ c * (3 / 2 : ℚ) ^ a = 2 ^ (c - a) * 3 ^ a := by
+    have hsplit : (2 : ℚ) ^ c = 2 ^ (c - a) * 2 ^ a := by
+      rw [← pow_add]; congr 1; omega
+    calc (2 : ℚ) ^ c * (3 / 2 : ℚ) ^ a
+        = 2 ^ (c - a) * (2 * (3 / 2)) ^ a := by rw [hsplit, mul_pow]; ring
+      _ = 2 ^ (c - a) * 3 ^ a := by norm_num
+  have key : (3 : ℚ) ^ c - 2 ^ (c - a) * 3 ^ a = 2 ^ c * (n : ℚ) := by
+    have hm := congrArg (fun z : ℚ => (2 : ℚ) ^ c * z) h
+    simp only [mul_sub] at hm
+    rw [e1, e2] at hm
+    exact hm
+  have keyZ : (3 : ℤ) ^ c - 2 ^ (c - a) * 3 ^ a = 2 ^ c * n := by exact_mod_cast key
+  have h3odd : (3 : ℤ) ^ c % 2 = 1 := Int.odd_iff.mp (Odd.pow (by decide))
+  obtain ⟨d, hd⟩ : ∃ d, c - a = d + 1 := ⟨c - a - 1, by omega⟩
+  obtain ⟨e, he⟩ : ∃ e, c = e + 1 := ⟨c - 1, by omega⟩
+  have hev1 : ((2 : ℤ) ^ (c - a) * 3 ^ a) % 2 = 0 := by
+    rw [hd, show (2 : ℤ) ^ (d + 1) * 3 ^ a = 2 * (2 ^ d * 3 ^ a) by ring]
+    exact Int.mul_emod_right 2 _
+  have hev2 : ((2 : ℤ) ^ c * n) % 2 = 0 := by
+    rw [he, show (2 : ℤ) ^ (e + 1) * n = 2 * (2 ^ e * n) by ring]
     exact Int.mul_emod_right 2 _
   omega
 
@@ -218,10 +255,24 @@ private lemma finite_of_gap_injOn (θ : ℚ) (hθ0 : 0 < θ) (hθ1 : θ < 1)
         ≤ ((θ ^ p.2 : ℚ) : ℝ) := by exact_mod_cast hdist
       _ = (θ : ℝ) ^ p.2 := by push_cast; ring
       _ < _ := theta_pow_lt_height_rpow hθ0' hθ1' hac
-  -- apply [NKR25] Thm 1.3(i) and contradict integrality of (3/2)^c
-  obtain ⟨q, hq𝒩, ⟨n, hn⟩, -⟩ := NKR.sUnit_pair_integrality 1 (-1) one_ne_zero
+  -- strict positivity: `(3/2)^c − (3/2)^a` is not an integer (parity)
+  have hposd : ∀ q ∈ enc '' T,
+      0 < ((1 : ℚ) * NKR.uval q.1.1 q.1.2
+        + (-1 : ℚ) * NKR.uval q.2.1 q.2.2).distToNearestInt := by
+    rintro q ⟨p, hpT, rfl⟩
+    obtain ⟨ha2, hac, -⟩ := hTsub hpT
+    simp only [enc_fst_fst, enc_fst_snd, enc_snd_fst, enc_snd_snd,
+      NKR.uval_neg_natCast, one_mul, neg_one_mul, ← sub_eq_add_neg]
+    rcases lt_or_eq_of_le
+      (Rat.distToNearestInt_nonneg ((3 / 2 : ℚ) ^ p.2 - (3 / 2 : ℚ) ^ p.1)) with h | h
+    · exact h
+    · exfalso
+      obtain ⟨n, hn⟩ := Rat.distToNearestInt_eq_zero_iff.mp h.symm
+      exact three_halves_pow_sub_not_int (by omega) hac n hn
+  -- apply the repaired-and-derived [NKR25] Thm 1.3(i); contradict integrality of (3/2)^c
+  obtain ⟨q, hq𝒩, ⟨n, hn⟩, -⟩ := NKR.sUnit_pair_integrality_of_subspace 1 (-1) one_ne_zero
     (by norm_num) (Real.log (θ : ℝ)⁻¹ / (2 * Real.log 3)) hεpos (enc '' T)
-    (hTinf.image enc_injective.injOn) habs hP2 hratio happrox
+    (hTinf.image enc_injective.injOn) habs hP2 hratio hposd happrox
   obtain ⟨p, hpT, rfl⟩ := hq𝒩
   obtain ⟨ha2, hac, -⟩ := hTsub hpT
   rw [enc_fst_fst, enc_fst_snd, NKR.uval_neg_natCast] at hn
