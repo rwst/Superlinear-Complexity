@@ -1,0 +1,94 @@
+# Certify this repository's headline theorems with leanprover/comparator:
+# Solution.lean (importing the development) must prove the exact statements of
+# Challenge.lean (importing Mathlib only), kernel-accepted, inside a landrun sandbox.
+#
+# Two configs pin the axiom stratification the docstrings claim:
+#   comparator/kernel.json    TH.superlinear_of_kernel      std3 only
+#   comparator/capstone.json  TH.superlinear_of_middleBand  std3 + Subspace.evertseSchlickewei
+#
+# Comparator requires Linux (landrun uses Landlock), so CI is the canonical run;
+# macOS/Windows are not supported by the sandbox.
+name: comparator
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.lean'
+      - 'lean-toolchain'
+      - 'lake-manifest.json'
+      - 'comparator/**'
+      - '.github/workflows/comparator.yml'
+  pull_request:
+    paths:
+      - '**.lean'
+      - 'lean-toolchain'
+      - 'lake-manifest.json'
+      - 'comparator/**'
+      - '.github/workflows/comparator.yml'
+  workflow_dispatch:
+
+jobs:
+  comparator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read pinned toolchain
+        id: toolchain
+        run: echo "version=$(sed 's/.*://' lean-toolchain)" >> "$GITHUB_OUTPUT"
+
+      - name: Install elan
+        run: |
+          curl https://elan.lean-lang.org/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Set up Go (for landrun)
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+
+      # landrun is the only tool not supplied by Lake: it has no releases we can pin,
+      # so it is built from source and cached on the toolchain version.
+      - name: Cache landrun
+        id: cache-landrun
+        uses: actions/cache@v4
+        with:
+          path: tools/landrun-bin
+          key: landrun-${{ steps.toolchain.outputs.version }}-v1
+
+      - name: Build landrun
+        if: steps.cache-landrun.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 https://github.com/Zouuup/landrun.git tools/landrun-src
+          cd tools/landrun-src
+          go build -o "$GITHUB_WORKSPACE/tools/landrun-bin/landrun" cmd/landrun/main.go
+
+      - name: Cache Lean build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .lake
+            ~/.cache/mathlib
+          key: lake-${{ steps.toolchain.outputs.version }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lake-${{ steps.toolchain.outputs.version }}-${{ hashFiles('lake-manifest.json') }}-
+
+      - name: Get Mathlib cache
+        run: lake exe cache get
+
+      # comparator and lean4export are Lake dependencies (see lakefile.lean), so Lake
+      # builds them at the toolchain the project pins — no version skew to manage.
+      - name: Build comparator and lean4export
+        run: lake build comparator lean4export
+
+      # Prebuilt outside the sandbox: it has no network, and Challenge imports all of
+      # Mathlib. Safe here because Solution is our own code, not an adversary's.
+      - name: Build challenge and solution
+        run: lake build Challenge Solution
+
+      - name: Run comparator (both configs)
+        run: |
+          export PATH="$PATH:$GITHUB_WORKSPACE/tools/landrun-bin"
+          lake test
